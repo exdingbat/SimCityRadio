@@ -1,0 +1,30 @@
+{
+    "name": "Test Network",
+    "description": "Is this thing on",
+    "allowAds": true,
+    "allowGameClips": true,
+    "channels": [
+        {
+            "name": "Test Channel",
+            "description": "Really, is it on",
+            "programs": [
+                {
+                    "name": "Test Program",
+                    "description": "Please just tell me",
+                    "segments": [
+                        { "clipsCap": 2, "tags": ["type:Public Service Announcements"], "type": "PSA" },
+                        { "clipsCap": 2, "tags": ["type:News"], "type": "News" },
+                        { "clipsCap": 2, "tags": ["type:Weather"], "type": "News" },
+                        { "clipsCap": 2, "tags": ["type:Commercial"], "type": "Commercial" },
+                        {
+                            "clips": [{ "filename": "foobar.ogg", "Title": "Test Title" }],
+                            "clipsCap": 2,
+                            "tags": ["type:Music", "radio station:Test Channel"],
+                            "type": "Playlist"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
