@@ -1,21 +1,28 @@
-using System.Collections.Generic;
 using ATL;
+
 using Colossal.IO.AssetDatabase;
+
 using ExtendedRadio;
+
 using HarmonyLib;
+
+using System.Collections.Generic;
+
 using UnityEngine;
+
 using static Colossal.IO.AssetDatabase.AudioAsset;
 using static Game.Audio.Radio.Radio;
 
+#nullable enable
 namespace SimCityRadio {
     // same as ExtendedRadio but takes JsonAudioAsset as param instead of reading from file
     public class MyMusicLoader {
         public static AudioAsset LoadAudioFile(
           string audioFilePath,
           SegmentType segmentType,
-          string networkName = null,
-          string radioChannelName = null,
-          JsonAudioAsset jsAudioAsset = null
+          string? networkName = null,
+          string? radioChannelName = null,
+          JsonAudioAsset? jsAudioAsset = null
         ) {
             jsAudioAsset ??= new JsonAudioAsset();
 
@@ -79,9 +86,11 @@ namespace SimCityRadio {
             return audioAsset;
         }
 
-        internal static void AddMetaTag(AudioAsset audioAsset, Dictionary<Metatag, string> m_Metatags, Metatag tag, string value) {
-            audioAsset.AddTag(value);
-            m_Metatags[tag] = value;
+        internal static void AddMetaTag(AudioAsset audioAsset, Dictionary<Metatag, string> m_Metatags, Metatag tag, string? value) {
+            if (value != null) {
+                audioAsset.AddTag(value);
+                m_Metatags[tag] = value;
+            }
         }
 
         internal static void AddMetaTag(
@@ -90,25 +99,19 @@ namespace SimCityRadio {
           Metatag tag,
           Track trackMeta,
           string oggTag,
-          string value = null
+          string? value = null
         ) {
-            string extendedTag = value ?? GetExtendedTag(trackMeta, oggTag);
+            string? extendedTag = value ?? GetExtendedTag(trackMeta, oggTag);
             if (!string.IsNullOrEmpty(extendedTag)) {
                 audioAsset.AddTag(oggTag.ToLower() + ":" + extendedTag);
                 AddMetaTag(audioAsset, m_Metatags, tag, extendedTag);
             }
         }
 
-        private static string GetExtendedTag(Track trackMeta, string tag) {
-            if (trackMeta.AdditionalFields.TryGetValue(tag, out var value)) {
-                return value;
-            }
-
-            return null;
-        }
+        private static string? GetExtendedTag(Track trackMeta, string tag) => trackMeta.AdditionalFields.TryGetValue(tag, out string? value) ? value : null;
 
         private static bool GetTimeTag(Track trackMeta, string tag, out double time) {
-            if (trackMeta.AdditionalFields.TryGetValue(tag, out var value) && double.TryParse(value, out time)) {
+            if (trackMeta.AdditionalFields.TryGetValue(tag, out string? value) && double.TryParse(value, out time)) {
                 return true;
             }
 
@@ -117,7 +120,7 @@ namespace SimCityRadio {
         }
 
         private static bool GetTimeTag(Track trackMeta, string tag, out float time) {
-            if (trackMeta.AdditionalFields.TryGetValue(tag, out var value) && float.TryParse(value, out time)) {
+            if (trackMeta.AdditionalFields.TryGetValue(tag, out string? value) && float.TryParse(value, out time)) {
                 return true;
             }
 

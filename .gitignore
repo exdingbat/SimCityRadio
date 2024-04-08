@@ -12,12 +12,11 @@
 *.svg
 *.jpg
 *.png
-**/*.ogg
-CustomRadios
-omnisharp.json
+*.ogg
+.editorconfig
+# CustomRadios
 .vscode
 Properties
-Properties\PublishConfiguration.xml
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 

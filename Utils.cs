@@ -1,22 +1,44 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using Colossal;
 using Colossal.IO.AssetDatabase;
 using Colossal.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections.Generic;
+using YamlDotNet.Core;
+using YamlDotNet.Serialization;
+using System.IO;
+using System.Linq;
+
 using static Game.Audio.Radio.Radio;
-
 #nullable enable
-
 namespace SimCityRadio {
-    static class Extensions {
+    internal static class Utils {
+        public static string ToJsonFromYaml(string yaml) {
+            object? parsedYml = new Deserializer().Deserialize(new MergingParser(new Parser(new StringReader(yaml))));
+            string json = new SerializerBuilder().DisableAliases().JsonCompatible().Build().Serialize(parsedYml);
+            return json;
+        }
+    }
+
+    internal static class Extensions {
+        // nullable JToken accessor
+        public static T? Get<T>(this JToken token, string key, T defaultValue) =>
+             (token[key] == null || token[key]?.Type == JTokenType.Null)
+             ? defaultValue
+             : token.Value<T>(key);
+
+        public static string? Get(this JToken token, string key) =>
+            (string?)token?[key];
+
         // nullable chainable dictionary accessor
         public static V? Get<T, V>(this IDictionary<T, V> dict, T key) {
             dict.TryGetValue(key, out V value);
             return value;
         }
-        public static U[] Map<T, U>(this IEnumerable<T> array, Func<T, U> cb) => array.Select(cb).ToArray();
-        public static U[] Map<T, U>(this IEnumerable<T> array, Func<T, int, U> cb) => array.Select(cb).ToArray();
+        public static IEnumerable<U> Map<T, U>(this IEnumerable<T> collection, Func<T, U> cb) => collection.Select(cb);
+        public static IEnumerable<U> Map<T, U>(this IEnumerable<T> collection, Func<T, int, U> cb) => collection.Select(cb);
+        public static U[] MapToArray<T, U>(this IEnumerable<T> collection, Func<T, U> cb) => collection.Map(cb).ToArray();
+        public static U[] MapToArray<T, U>(this IEnumerable<T> collection, Func<T, int, U> cb) => collection.Map(cb).ToArray();
 
         public static T Convert<T>(this object arg) => Decoder.Decode(arg.ToJSONString()).Make<T>();
 
@@ -49,9 +71,9 @@ namespace SimCityRadio {
 
         public static void Log(AudioAsset clip) {
             if (clip == null) {
-                Mod.log.Debug("id: <missing>");
+                Mod.log.Verbose("id: <missing>");
             } else {
-                Mod.log.Debug(string.Format("id: {0} tags: {1} duration: {2}", clip.guid, string.Join(", ", clip.tags), FormatUtils.FormatTimeDebug(clip.durationMs)));
+                Mod.log.Verbose(string.Format("id: {0} tags: {1} duration: {2}", clip.guid, string.Join(", ", clip.tags), FormatUtils.FormatTimeDebug(clip.durationMs)));
             }
         }
 
@@ -62,7 +84,7 @@ namespace SimCityRadio {
                 Mod.log.Verbose($"estimatedStart: {FormatUtils.FormatTimeDebug(program.startTime)} ({program.startTime}s)");
                 Mod.log.Verbose($"estimatedEnd: {FormatUtils.FormatTimeDebug(program.endTime)} ({program.endTime}s)");
                 Mod.log.Verbose($"loopProgram: {program.loopProgram}");
-                Mod.log.Verbose($"estimatedDuration: {FormatUtils.FormatTimeDebug(program.duration)} ({program.duration}s) (realtime at x1: {FormatUtils.FormatTimeDebug((int)((float)program.duration * 0.0505679026f))})");
+                Mod.log.Verbose($"estimatedDuration: {FormatUtils.FormatTimeDebug(program.duration)} ({program.duration}s) (realtime at x1: {FormatUtils.FormatTimeDebug((int)(program.duration * 0.0505679026f))})");
                 Mod.log.DebugFormat("Segments ({0})", program.segments.Count);
                 using (Mod.log.indent.scoped) {
                     foreach (RuntimeSegment segment in program.segments) {

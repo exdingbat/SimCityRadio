@@ -1,73 +1,85 @@
+
+using Colossal.IO.AssetDatabase;
+
+using ExtendedRadio;
+
+using Newtonsoft.Json.Linq;
+
 using System.Collections.Generic;
 using System.IO;
-using Colossal.Json;
-using ExtendedRadio;
-using Newtonsoft.Json.Linq;
+using System.Linq;
+
 using static Game.Audio.Radio.Radio;
 
+#nullable enable
 namespace SimCityRadio {
 
     public class InflateRadioNetwork {
+        private readonly string _basePath;
+        public readonly RadioNetwork network;
+        public readonly List<SimCityRadioChannel> channels;
 
-        private readonly string basePath;
-        public RadioNetwork network;
-        public RadioChannel[] channels;
-
-        public void Deconstruct(out RadioNetwork network, out RadioChannel[] channels) {
+        public void Deconstruct(out RadioNetwork network, out List<SimCityRadioChannel> channels) {
             network = this.network;
             channels = this.channels;
         }
 
-        public InflateRadioNetwork(string json, string basePath, ref Dictionary<string, bool> coalesceByProgram) {
-            JToken node = JToken.Parse(json);
-            this.basePath = basePath;
-            network = new RadioNetwork {
-                name = (string)node["name"],
-                nameId = (string)node["name"],
-                description = (string)node["description"],
-                descriptionId = (string)node["description"],
-                icon = (string)node["icon"],
-                allowAds = (bool)node["allowAds"]
-            };
-            coalesceByProgram[network.name] = (bool)node["allowGameClips"];
-            channels = node["channels"].Map(ParseChannel);
+        public InflateRadioNetwork(string json, string basePath) {
+            JToken jtoken = JToken.Parse(json);
+            _basePath = basePath;
+            network = jtoken.ToObject<RadioNetwork>() ?? new RadioNetwork();
+            network.descriptionId ??= network.description;
+            network.nameId ??= network.name;
+            channels = jtoken["channels"]?.MapToArray(ParseChannel).ToList() ?? [];
         }
 
-        private RadioChannel ParseChannel(JToken node) =>
-            new RadioChannel() {
-                network = network.name,
-                name = (string)node["name"],
-                nameId = (string)node["name"],
-                description = (string)node["description"],
-                icon = (string)node["icon"],
-                programs = node["programs"].ToObject<JToken[]>().Map((p) => ParseProgram(p, (string)node["name"]))
-            };
+        private SimCityRadioChannel ParseChannel(JToken jtoken) {
+            JToken? programs = jtoken["programs"];
+            programs?.Parent?.Remove();
+            SimCityRadioChannel channel = jtoken.ToObject<SimCityRadioChannel>() ?? new();
+            channel.network = network.name;
+            channel.allowGameClips = jtoken.Get("allowGameClips", false);
+            channel.programs = programs?.MapToArray((p) => ParseProgram(p, channel.name));
+            return channel;
+        }
 
-        private Program ParseProgram(JToken node, string channel) =>
-            new Program {
-                name = (string)node["name"],
-                description = (string)node["description"],
-                icon = (string)node["icon"],
-                startTime = "00:00",
-                endTime = "00:00",
-                loopProgram = true,
-                pairIntroOutro = false,
-                segments = node["segments"].Map((s) => ParseSegment(s, channel))
-            };
+        private Program ParseProgram(JToken jtoken, string? channel) {
+            JToken? segments = jtoken["segments"];
+            segments?.Parent?.Remove();
+            Program program = jtoken.ToObject<Program>() ?? new();
+            program.endTime ??= "00:00";
+            program.startTime ??= "00:00";
+            program.loopProgram = jtoken.Get("loopProgram", true);
+            program.segments = segments?.MapToArray((s) => ParseSegment(s, channel));
+            return program;
+        }
 
-        private Segment ParseSegment(JToken node, string channelName) =>
-            new Segment {
-                type = node["type"]!.ToObject<SegmentType>(),
-                tags = node["tags"]?.ToObject<List<string>>()?.ToArray(),
-                clipsCap = (int)node["clipsCap"],
-                clips = node["clips"]?.ToObject<List<JToken>>()?.Map((c) => {
-                    var audioFilePath = Path.Combine(basePath, (string)c["filename"]);
-                    var jsonAudioAsset = Decoder.Decode(c.ToString()).Make<JsonAudioAsset>();
-                    return MyMusicLoader.LoadAudioFile(audioFilePath, node["type"]!.ToObject<SegmentType>(), network.name, channelName, jsonAudioAsset);
-                })
-            };
-        // if network allowAds = true DO NOT ALLOW PSAs
-        // auto add tags here?
-        // segment.clips ??= [];
+        private Segment ParseSegment(JToken jtoken, string? channelName) {
+            JToken? unnormalized = jtoken.Get<JToken?>("clips", null);
+            unnormalized?.Parent?.Remove();
+            IEnumerable<(string?, JsonAudioAsset?)>? normalized = null;
+            if (unnormalized != null && unnormalized.Type != JTokenType.Null) {
+                if (unnormalized is JObject) {
+                    normalized = (unnormalized?.ToObject<Dictionary<string?, JsonAudioAsset?>>().ToList().Map(p => (p.Key, p.Value)));
+                } else {
+                    normalized = (unnormalized?.Map(c => c.Type == JTokenType.String ? (c.ToString(), null) : (c.Get("filename"), c.ToObject<JsonAudioAsset>())));
+                }
+            }
+
+            // TODO add some SegmentType/tags helpers=
+            Segment segment = jtoken.ToObject<Segment>() ?? new();
+            AudioAsset[] clips = normalized?.MapToArray(
+            c => MyMusicLoader.LoadAudioFile(
+                Path.Combine(_basePath, c.Item1),
+                    segment.type,
+                    network.name,
+                    channelName,
+                    c.Item2
+                )
+            ) ?? [];
+            segment.clips ??= clips;
+
+            return segment;
+        }
     }
 }
