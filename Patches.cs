@@ -103,7 +103,7 @@ namespace SimCityRadio.Patches {
     internal class Radio_GetPlaylistClips {
         private static void Postfix(Radio __instance, RuntimeSegment segment) {
             if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return;
+                return; // do not run patched method on normal radio channels
             }
             List<AudioAsset> list = PatchUtils.GetAllClips(__instance, segment);
             bool isEmpty = PatchUtils.HandleEmptySegment(__instance, segment, list);
@@ -118,7 +118,7 @@ namespace SimCityRadio.Patches {
     internal class Radio_GetCommercialClips {
         private static void Postfix(Radio __instance, RuntimeSegment segment) {
             if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return;
+                return; // do not run patched method on normal radio channels
             }
 
             Dictionary<string, RadioNetwork> m_Networks = Traverse.Create(__instance).Field("m_Networks").GetValue<Dictionary<string, RadioNetwork>>();
@@ -140,7 +140,7 @@ namespace SimCityRadio.Patches {
     internal class Radio_QueueNextClip {
         private static bool Prefix(Radio __instance) {
             if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return true;
+                return true; // do not run patched method on normal radio channels
             }
             RuntimeProgram p = __instance.currentChannel?.currentProgram;
             try {
@@ -160,7 +160,7 @@ namespace SimCityRadio.Patches {
     internal class Radio_GetEventClips {
         private static void Postfix(Radio __instance, ref List<AudioAsset> __result, RuntimeSegment segment, Metatag metatag, bool newestFirst = false, bool flush = false) {
             if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return;
+                return; // do not run patched method on normal radio channels
             }
             // check channel setting to allow merging with game clips
             RadioTagSystem existingSystemManaged = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<RadioTagSystem>();

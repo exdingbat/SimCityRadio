@@ -31,12 +31,12 @@ namespace SimCityRadio {
         }
 
         public InflateRadioNetwork(string json, string basePath) {
-            JObject jObj = JObject.Parse(json);
+            JObject jobject = JObject.Parse(json);
             _basePath = basePath;
-            network = jObj.ToObject<RadioNetwork>() ?? new RadioNetwork();
+            network = jobject.ToObject<RadioNetwork>() ?? new RadioNetwork();
             network.descriptionId ??= network.description;
             network.nameId ??= network.name;
-            channels = jObj["channels"]?.MapToArray(ParseChannel).ToList() ?? [];
+            channels = jobject["channels"]?.MapToArray(ParseChannel).ToList() ?? [];
         }
 
         private SimCityRadioChannel ParseChannel(JToken jtoken) {
@@ -70,33 +70,46 @@ namespace SimCityRadio {
             }
         }
 
-        private IEnumerable<ClipTuple> ParseClips(JToken? clipsToken) {
-            static ClipTuple getClipTuple(JToken c) =>
-                c is JObject jObj
-                    ? (jObj.Value<string?>("filename") ?? "", jObj.ToObject<JsonAudioAsset>() ?? new())
-                    : (c.ToString(), new());
+        private ClipTuple GetClipTuple(JToken jtoken) =>
+            jtoken is JObject jobject
+                ? (jobject.Value<string?>("filename") ?? "", jobject.ToObject<JsonAudioAsset>() ?? new())
+                : (jtoken.ToString(), new());
 
+        private JArray FlattenJArray(JArray jarray) {
+            JArray flattened = [];
+            foreach (JToken child in jarray.Children()) {
+                if (child is JArray childArray) {
+                    flattened.Merge(childArray);
+                } else {
+                    flattened.Add(child);
+                }
+            }
+            return flattened;
+        }
+
+        private IEnumerable<ClipTuple> ParseClips(JToken? jtoken) {
             IEnumerable<ClipTuple> normalizedClips = [];
-            if (clipsToken is JObject clipsObj) {
+            if (jtoken is JObject clipsObj) {
                 normalizedClips = clipsObj.ToObject<Dictionary<string, JsonAudioAsset>>().ToList().Map(p => (p.Key, p.Value));
-            } else if (clipsToken is JArray clipsArray) {
-                normalizedClips = clipsArray.Map(getClipTuple);
+            } else if (jtoken is JArray clipsArray) {
+                normalizedClips = FlattenJArray(clipsArray).Map(GetClipTuple);
             }
             return normalizedClips;
         }
 
-        private Segment ParseSegment(JToken jToken, string channel) {
-            int clipsCap = jToken.Value<int>("clipsCap");
+        private Segment ParseSegment(JToken jtoken, string channel) {
+            int clipsCap = jtoken.Value<int>("clipsCap");
             clipsCap = clipsCap == 0 ? 1 : clipsCap;
-            string typeString = jToken.Value<string?>("type") ?? "Playlist";
+            string typeString = jtoken.Value<string?>("type") ?? "Playlist";
             SegmentType type = (SegmentType)Enum.Parse(typeof(SegmentType), typeString);
-            string[] tags = jToken["tags"]?.ToObject<string[]?>() ?? [];
+            string[] tags = jtoken["tags"]?.ToObject<string[]?>() ?? [];
             if (tags.Length == 0) {
                 tags = MakeTags(type, channel);
             }
             AudioAsset clipToAudio(ClipTuple c) =>
-                MyMusicLoader.LoadAudioFile(Path.Combine(_basePath, c.path), type, network.name, channel, c.data);
-            AudioAsset[] clips = ParseClips(jToken["clips"]).MapToArray(clipToAudio);
+                MyMusicLoader.LoadAudioFile(Path.Combine([_basePath, .. c.path.Split('/')]), type, network.name, channel, c.data);
+            AudioAsset[] clips = ParseClips(jtoken["clips"]).MapToArray(clipToAudio);
+
             return new Segment {
                 clips = clips ?? [],
                 clipsCap = clipsCap,

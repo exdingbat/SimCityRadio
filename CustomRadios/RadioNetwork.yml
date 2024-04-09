@@ -2,88 +2,88 @@
 name: SimCity Radio
 description: Tune in to future jazz classics from SimCity 3000 and SimCity 4
 allowAds: true
-icon: &sc-icon coui://simcityradio/CustomRadios/simcity.svg
+icon: coui://simcityradio/CustomRadios/simcity-network.svg
 clipGroups:
     - &ads-clips
-      SimCity 2000 Network Edition-simstreets_ad049.ogg:
-      SimCity 2000 Network Edition-simstreets_ad050.ogg:
-      SimCity 2000.ogg:
-      SimCity 3000.ogg:
-      simcity4trailer.ogg:
-      SimCity-simcopter_ad085_trimmed.ogg:
-      SimCopter.ogg:
-      SimFarm-simcopter_ad082.ogg:
-      SimGolf-simcopter_ad080.ogg:
-      SimIsle-simcopter_ad081.ogg:
-      SimLife-simcopter_ad084.ogg:
-      SimTower-simcopter_ad083.ogg:
-      SimTown.ogg:
-      SimTown-simstreets_ad052.ogg:
-      SimTunes-simstreets_ad054.ogg:
+      - clips/SimCity 2000 Network Edition-simstreets_ad049.ogg
+      - clips/SimCity 2000 Network Edition-simstreets_ad050.ogg
+      - clips/SimCity 2000.ogg
+      - clips/SimCity 3000.ogg
+      - clips/simcity4trailer.ogg
+      - clips/SimCity-simcopter_ad085_trimmed.ogg
+      - clips/SimCopter.ogg
+      - clips/SimFarm-simcopter_ad082.ogg
+      - clips/SimGolf-simcopter_ad080.ogg
+      - clips/SimIsle-simcopter_ad081.ogg
+      - clips/SimLife-simcopter_ad084.ogg
+      - clips/SimTower-simcopter_ad083.ogg
+      - clips/SimTown.ogg
+      - clips/SimTown-simstreets_ad052.ogg
+      - clips/SimTunes-simstreets_ad054.ogg
     - &sc3k-clips
-      Building.ogg:
-      Central Park Sunday.ogg:
-      Concrete Jungle.ogg:
-      Illumination.ogg:
-      Infrastructure.ogg:
-      Magic City.ogg:
-      Night Life.ogg:
-      Power Grid.ogg:
-      Sim Broadway.ogg:
-      South Bridge.ogg:
-      Unlimited - City Lights.ogg:
-      Unlimited - City of Dreams.ogg:
-      Unlimited - Desert Sand.ogg:
-      Unlimited - Sixth Floor.ogg:
-      Unlimited - The Howling Wind.ogg:
-      Updown Town.ogg:
-      Urban Complex.ogg:
-      Window Washers Dream.ogg:
+      - clips/Building.ogg
+      - clips/Central Park Sunday.ogg
+      - clips/Concrete Jungle.ogg
+      - clips/Illumination.ogg
+      - clips/Infrastructure.ogg
+      - clips/Magic City.ogg
+      - clips/Night Life.ogg
+      - clips/Power Grid.ogg
+      - clips/Sim Broadway.ogg
+      - clips/South Bridge.ogg
+      - clips/Unlimited - City Lights.ogg
+      - clips/Unlimited - City of Dreams.ogg
+      - clips/Unlimited - Desert Sand.ogg
+      - clips/Unlimited - Sixth Floor.ogg
+      - clips/Unlimited - The Howling Wind.ogg
+      - clips/Updown Town.ogg
+      - clips/Urban Complex.ogg
+      - clips/Window Washers Dream.ogg
     - &sc4-clips
-      01 - Rush Hour - Area 52 (Bombay) [Region].ogg:
-      02 - Rush Hour - Bumper To Bumper.ogg:
-      03 - Rush Hour - Floating Population.ogg:
-      04 - Rush Hour - Wheels Of Progress.ogg:
-      05 - Rush Hour - Metropolis.ogg:
-      06 - Rush Hour - Deserted.ogg:
-      07 - Rush Hour - Chain Reaction.ogg:
-      08 - Rush Hour - The Morning Commute.ogg:
-      09 - Rush Hour - Arctica [Region].ogg:
-      10 - Rush Hour - Dig Deep [Region].ogg:
-      11 - Rush Hour - ElectriCITY.ogg:
-      Above The Clouds (From Above) [Region].ogg:
-      Bohemian Street Jam (Simmin).ogg:
-      By The Bay.ogg:
-      Crosswalk Talk.ogg:
-      Epicenter.ogg:
-      Gritty City (Rockin Down).ogg:
-      Landfill.ogg:
-      New Terrain.ogg:
-      Night Owl.ogg:
-      No Gridlock.ogg:
-      Oasis.ogg:
-      Parallel View [Region].ogg:
-      Primordial Dream [Region].ogg:
-      Re-Development.ogg:
-      Rush Hour.ogg:
-      Shape Shifter (The Creator) [Region].ogg:
-      Street Sweeper.ogg:
-      Taking Shape [Region].ogg:
-      Tarrmack.ogg:
-      Terrain [Region].ogg:
-      The New Hood.ogg:
-      Transit Angst.ogg:
-      Urban Underground.ogg:
-      Without Form [Region].ogg:
-      Zone System.ogg:
+      - clips/01 - Rush Hour - Area 52 (Bombay) [Region].ogg
+      - clips/02 - Rush Hour - Bumper To Bumper.ogg
+      - clips/03 - Rush Hour - Floating Population.ogg
+      - clips/04 - Rush Hour - Wheels Of Progress.ogg
+      - clips/05 - Rush Hour - Metropolis.ogg
+      - clips/06 - Rush Hour - Deserted.ogg
+      - clips/07 - Rush Hour - Chain Reaction.ogg
+      - clips/08 - Rush Hour - The Morning Commute.ogg
+      - clips/09 - Rush Hour - Arctica [Region].ogg
+      - clips/10 - Rush Hour - Dig Deep [Region].ogg
+      - clips/11 - Rush Hour - ElectriCITY.ogg
+      - clips/Above The Clouds (From Above) [Region].ogg
+      - clips/Bohemian Street Jam (Simmin).ogg
+      - clips/By The Bay.ogg
+      - clips/Crosswalk Talk.ogg
+      - clips/Epicenter.ogg
+      - clips/Gritty City (Rockin Down).ogg
+      - clips/Landfill.ogg
+      - clips/New Terrain.ogg
+      - clips/Night Owl.ogg
+      - clips/No Gridlock.ogg
+      - clips/Oasis.ogg
+      - clips/Parallel View [Region].ogg
+      - clips/Primordial Dream [Region].ogg
+      - clips/Re-Development.ogg
+      - clips/Rush Hour.ogg
+      - clips/Shape Shifter (The Creator) [Region].ogg
+      - clips/Street Sweeper.ogg
+      - clips/Taking Shape [Region].ogg
+      - clips/Tarrmack.ogg
+      - clips/Terrain [Region].ogg
+      - clips/The New Hood.ogg
+      - clips/Transit Angst.ogg
+      - clips/Urban Underground.ogg
+      - clips/Without Form [Region].ogg
+      - clips/Zone System.ogg
 channels:
     - name: SimCity 3000
+      description: SimCity 3000
       allowGameClips: true
-      description: &sc3k-desc SimCity 3000 + Unlimited
-      icon: &sc3k-icon coui://simcityradio/CustomRadios/sc3k_cover.svg
+      icon: &sc3k-icon coui://simcityradio/CustomRadios/sc3k-channel.svg
       programs:
-          - name: Non-stop future jazz
-            description: *sc3k-desc
+          - name: + Unlimited
+            description: Non-stop future jazz
             icon: *sc3k-icon
             segments:
                 - type: News
@@ -91,12 +91,12 @@ channels:
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
                 - { type: Playlist, clipsCap: 4, clips: *sc3k-clips }
     - name: SimCity 4
+      description: SimCity 4
       allowGameClips: true
-      description: &sc4-desc SimCity 4 + Rush Hour
-      icon: &sc4-icon coui://simcityradio/CustomRadios/sc4_cover.svg
+      icon: &sc4-icon coui://simcityradio/CustomRadios/sc4-channel.svg
       programs:
-          - name: Non-stop future jazz
-            description: *sc4-desc
+          - name: + Rush Hour
+            description: Non-stop future jazz
             icon: *sc4-icon
             segments:
                 - type: News
@@ -104,15 +104,15 @@ channels:
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
                 - { type: Playlist, clipsCap: 4, clips: *sc4-clips }
     - name: SimCity
-      description: &sc-desc All SimCity, all the time
-      icon: *sc-icon
+      description: All SimCity, all the time
       allowGameClips: true
+      icon: &sc-icon coui://simcityradio/CustomRadios/simcity-channel.svg
       programs:
-          - name: Non-stop future jazz
-            description: *sc-desc
+          - name: SimCity 3000 + SimCity 4
+            description: All SimCity, all the time
             icon: *sc-icon
             segments:
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 4, clips: { <<: *sc4-clips, <<: *sc3k-clips } }
+                - { type: Playlist, clipsCap: 4, clips: [*sc4-clips, *sc3k-clips] }
