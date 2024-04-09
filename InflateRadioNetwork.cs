@@ -5,6 +5,7 @@ using ExtendedRadio;
 
 using Newtonsoft.Json.Linq;
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,8 +13,13 @@ using System.Linq;
 using static Game.Audio.Radio.Radio;
 
 #nullable enable
-namespace SimCityRadio {
 
+namespace SimCityRadio {
+    using ClipTuple = (string path, JsonAudioAsset data);
+
+
+    // do all this instead of Decode.Make crap because dynamic types don't seem to work with unity
+    // and i decided to support polymorphic config files
     public class InflateRadioNetwork {
         private readonly string _basePath;
         public readonly RadioNetwork network;
@@ -25,12 +31,12 @@ namespace SimCityRadio {
         }
 
         public InflateRadioNetwork(string json, string basePath) {
-            JToken jtoken = JToken.Parse(json);
+            JObject jObj = JObject.Parse(json);
             _basePath = basePath;
-            network = jtoken.ToObject<RadioNetwork>() ?? new RadioNetwork();
+            network = jObj.ToObject<RadioNetwork>() ?? new RadioNetwork();
             network.descriptionId ??= network.description;
             network.nameId ??= network.name;
-            channels = jtoken["channels"]?.MapToArray(ParseChannel).ToList() ?? [];
+            channels = jObj["channels"]?.MapToArray(ParseChannel).ToList() ?? [];
         }
 
         private SimCityRadioChannel ParseChannel(JToken jtoken) {
@@ -38,48 +44,66 @@ namespace SimCityRadio {
             programs?.Parent?.Remove();
             SimCityRadioChannel channel = jtoken.ToObject<SimCityRadioChannel>() ?? new();
             channel.network = network.name;
-            channel.allowGameClips = jtoken.Get("allowGameClips", false);
+            channel.allowGameClips = jtoken.Value<bool?>("allowGameClips") ?? false;
             channel.programs = programs?.MapToArray((p) => ParseProgram(p, channel.name));
             return channel;
         }
 
-        private Program ParseProgram(JToken jtoken, string? channel) {
+        private Program ParseProgram(JToken jtoken, string channel) {
             JToken? segments = jtoken["segments"];
             segments?.Parent?.Remove();
             Program program = jtoken.ToObject<Program>() ?? new();
             program.endTime ??= "00:00";
             program.startTime ??= "00:00";
-            program.loopProgram = jtoken.Get("loopProgram", true);
+            program.loopProgram = jtoken.Value<bool?>("loopProgram") ?? true;
             program.segments = segments?.MapToArray((s) => ParseSegment(s, channel));
             return program;
         }
 
-        private Segment ParseSegment(JToken jtoken, string? channelName) {
-            JToken? unnormalized = jtoken.Get<JToken?>("clips", null);
-            unnormalized?.Parent?.Remove();
-            IEnumerable<(string?, JsonAudioAsset?)>? normalized = null;
-            if (unnormalized != null && unnormalized.Type != JTokenType.Null) {
-                if (unnormalized is JObject) {
-                    normalized = (unnormalized?.ToObject<Dictionary<string?, JsonAudioAsset?>>().ToList().Map(p => (p.Key, p.Value)));
-                } else {
-                    normalized = (unnormalized?.Map(c => c.Type == JTokenType.String ? (c.ToString(), null) : (c.Get("filename"), c.ToObject<JsonAudioAsset>())));
-                }
+        private string[] MakeTags(SegmentType type, string channel) {
+            if (type == SegmentType.PSA) {
+                return ["type:Public Service Announcements"];
+            } else if (type == SegmentType.Playlist) {
+                return ["type:Music", $"radio channel:{channel}"];
+            } else {
+                return [$"type:{type}"];
             }
+        }
 
-            // TODO add some SegmentType/tags helpers=
-            Segment segment = jtoken.ToObject<Segment>() ?? new();
-            AudioAsset[] clips = normalized?.MapToArray(
-            c => MyMusicLoader.LoadAudioFile(
-                Path.Combine(_basePath, c.Item1),
-                    segment.type,
-                    network.name,
-                    channelName,
-                    c.Item2
-                )
-            ) ?? [];
-            segment.clips ??= clips;
+        private IEnumerable<ClipTuple> ParseClips(JToken? clipsToken) {
+            static ClipTuple getClipTuple(JToken c) =>
+                c is JObject jObj
+                    ? (jObj.Value<string?>("filename") ?? "", jObj.ToObject<JsonAudioAsset>() ?? new())
+                    : (c.ToString(), new());
 
-            return segment;
+            IEnumerable<ClipTuple> normalizedClips = [];
+            if (clipsToken is JObject clipsObj) {
+                normalizedClips = clipsObj.ToObject<Dictionary<string, JsonAudioAsset>>().ToList().Map(p => (p.Key, p.Value));
+            } else if (clipsToken is JArray clipsArray) {
+                normalizedClips = clipsArray.Map(getClipTuple);
+            }
+            return normalizedClips;
+        }
+
+        private Segment ParseSegment(JToken jToken, string channel) {
+            int clipsCap = jToken.Value<int>("clipsCap");
+            clipsCap = clipsCap == 0 ? 1 : clipsCap;
+            string typeString = jToken.Value<string?>("type") ?? "Playlist";
+            SegmentType type = (SegmentType)Enum.Parse(typeof(SegmentType), typeString);
+            string[] tags = jToken["tags"]?.ToObject<string[]?>() ?? [];
+            if (tags.Length == 0) {
+                tags = MakeTags(type, channel);
+            }
+            AudioAsset clipToAudio(ClipTuple c) =>
+                MyMusicLoader.LoadAudioFile(Path.Combine(_basePath, c.path), type, network.name, channel, c.data);
+            AudioAsset[] clips = ParseClips(jToken["clips"]).MapToArray(clipToAudio);
+            Mod.log.Debug($"{channel} {type} ParseSegment {clips.Length} {clipsCap}");
+            return new Segment {
+                clips = clips ?? [],
+                clipsCap = clipsCap,
+                tags = tags,
+                type = type
+            };
         }
     }
 }

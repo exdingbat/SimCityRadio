@@ -1,14 +1,13 @@
 using Colossal;
 using Colossal.IO.AssetDatabase;
 using Colossal.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using YamlDotNet.Core;
 using YamlDotNet.Serialization;
 using System.IO;
 using System.Linq;
-
+using System.Security.Cryptography;
 using static Game.Audio.Radio.Radio;
 #nullable enable
 namespace SimCityRadio {
@@ -22,13 +21,13 @@ namespace SimCityRadio {
 
     internal static class Extensions {
         // nullable JToken accessor
-        public static T? Get<T>(this JToken token, string key, T defaultValue) =>
-             (token[key] == null || token[key]?.Type == JTokenType.Null)
-             ? defaultValue
-             : token.Value<T>(key);
+        // public static T? Get<T>(this JToken token, string key, T defaultValue) =>
+        //      (token[key] == null || token[key]?.Type == JTokenType.Null)
+        //      ? defaultValue
+        //      : token.Value<T>(key);
 
-        public static string? Get(this JToken token, string key) =>
-            (string?)token?[key];
+        // public static string? Get(this JToken token, string key) =>
+        //     (string?)token?[key];
 
         // nullable chainable dictionary accessor
         public static V? Get<T, V>(this IDictionary<T, V> dict, T key) {
@@ -41,6 +40,22 @@ namespace SimCityRadio {
         public static U[] MapToArray<T, U>(this IEnumerable<T> collection, Func<T, int, U> cb) => collection.Map(cb).ToArray();
 
         public static T Convert<T>(this object arg) => Decoder.Decode(arg.ToJSONString()).Make<T>();
+
+        // 🙏🙏🙏 'grenade' - https://stackoverflow.com/questions/273313/randomize-a-listt
+        public static void Shuffle<T>(this IList<T> list) {
+            RNGCryptoServiceProvider provider = new();
+            int n = list.Count;
+            while (n > 1) {
+                byte[] box = new byte[1];
+                do {
+                    provider.GetBytes(box);
+                }
+                while (!(box[0] < n * (byte.MaxValue / n)));
+                int k = box[0] % n;
+                n--;
+                (list[n], list[k]) = (list[k], list[n]);
+            }
+        }
 
         public static void Log(RadioNetwork network) {
             Mod.log.Debug("name: " + network.name);

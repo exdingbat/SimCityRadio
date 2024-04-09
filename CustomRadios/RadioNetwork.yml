@@ -1,0 +1,118 @@
+---
+name: SimCity Radio
+description: Tune in to future jazz classics from SimCity 3000 and SimCity 4
+allowAds: true
+icon: &sc-icon coui://simcityradio/CustomRadios/simcity.svg
+clipGroups:
+    - &ads-clips
+      SimCity 2000 Network Edition-simstreets_ad049.ogg:
+      SimCity 2000 Network Edition-simstreets_ad050.ogg:
+      SimCity 2000.ogg:
+      SimCity 3000.ogg:
+      simcity4trailer.ogg:
+      SimCity-simcopter_ad085_trimmed.ogg:
+      SimCopter.ogg:
+      SimFarm-simcopter_ad082.ogg:
+      SimGolf-simcopter_ad080.ogg:
+      SimIsle-simcopter_ad081.ogg:
+      SimLife-simcopter_ad084.ogg:
+      SimTower-simcopter_ad083.ogg:
+      SimTown.ogg:
+      SimTown-simstreets_ad052.ogg:
+      SimTunes-simstreets_ad054.ogg:
+    - &sc3k-clips
+      Building.ogg:
+      Central Park Sunday.ogg:
+      Concrete Jungle.ogg:
+      Illumination.ogg:
+      Infrastructure.ogg:
+      Magic City.ogg:
+      Night Life.ogg:
+      Power Grid.ogg:
+      Sim Broadway.ogg:
+      South Bridge.ogg:
+      Unlimited - City Lights.ogg:
+      Unlimited - City of Dreams.ogg:
+      Unlimited - Desert Sand.ogg:
+      Unlimited - Sixth Floor.ogg:
+      Unlimited - The Howling Wind.ogg:
+      Updown Town.ogg:
+      Urban Complex.ogg:
+      Window Washers Dream.ogg:
+    - &sc4-clips
+      01 - Rush Hour - Area 52 (Bombay) [Region].ogg:
+      02 - Rush Hour - Bumper To Bumper.ogg:
+      03 - Rush Hour - Floating Population.ogg:
+      04 - Rush Hour - Wheels Of Progress.ogg:
+      05 - Rush Hour - Metropolis.ogg:
+      06 - Rush Hour - Deserted.ogg:
+      07 - Rush Hour - Chain Reaction.ogg:
+      08 - Rush Hour - The Morning Commute.ogg:
+      09 - Rush Hour - Arctica [Region].ogg:
+      10 - Rush Hour - Dig Deep [Region].ogg:
+      11 - Rush Hour - ElectriCITY.ogg:
+      Above The Clouds (From Above) [Region].ogg:
+      Bohemian Street Jam (Simmin).ogg:
+      By The Bay.ogg:
+      Crosswalk Talk.ogg:
+      Epicenter.ogg:
+      Gritty City (Rockin Down).ogg:
+      Landfill.ogg:
+      New Terrain.ogg:
+      Night Owl.ogg:
+      No Gridlock.ogg:
+      Oasis.ogg:
+      Parallel View [Region].ogg:
+      Primordial Dream [Region].ogg:
+      Re-Development.ogg:
+      Rush Hour.ogg:
+      Shape Shifter (The Creator) [Region].ogg:
+      Street Sweeper.ogg:
+      Taking Shape [Region].ogg:
+      Tarrmack.ogg:
+      Terrain [Region].ogg:
+      The New Hood.ogg:
+      Transit Angst.ogg:
+      Urban Underground.ogg:
+      Without Form [Region].ogg:
+      Zone System.ogg:
+channels:
+    - name: SimCity 3000
+      allowGameClips: true
+      description: &sc3k-desc SimCity 3000 + Unlimited
+      icon: &sc3k-icon coui://simcityradio/CustomRadios/sc3k_cover.svg
+      programs:
+          - name: Non-stop future jazz
+            description: *sc3k-desc
+            icon: *sc3k-icon
+            segments:
+                - type: News
+                - type: Weather
+                - { type: Commercial, clipsCap: 2, clips: *ads-clips }
+                - { type: Playlist, clipsCap: 4, clips: *sc3k-clips }
+    - name: SimCity 4
+      allowGameClips: true
+      description: &sc4-desc SimCity 4 + Rush Hour
+      icon: &sc4-icon coui://simcityradio/CustomRadios/sc4_cover.svg
+      programs:
+          - name: Non-stop future jazz
+            description: *sc4-desc
+            icon: *sc4-icon
+            segments:
+                - type: News
+                - type: Weather
+                - { type: Commercial, clipsCap: 2, clips: *ads-clips }
+                - { type: Playlist, clipsCap: 4, clips: *sc4-clips }
+    - name: SimCity
+      description: &sc-desc All SimCity, all the time
+      icon: *sc-icon
+      allowGameClips: true
+      programs:
+          - name: Non-stop future jazz
+            description: *sc-desc
+            icon: *sc-icon
+            segments:
+                - type: News
+                - type: Weather
+                - { type: Commercial, clipsCap: 2, clips: *ads-clips }
+                - { type: Playlist, clipsCap: 4, clips: { <<: *sc4-clips, <<: *sc3k-clips } }
