@@ -97,7 +97,6 @@ namespace SimCityRadio {
             AudioAsset clipToAudio(ClipTuple c) =>
                 MyMusicLoader.LoadAudioFile(Path.Combine(_basePath, c.path), type, network.name, channel, c.data);
             AudioAsset[] clips = ParseClips(jToken["clips"]).MapToArray(clipToAudio);
-            Mod.log.Debug($"{channel} {type} ParseSegment {clips.Length} {clipsCap}");
             return new Segment {
                 clips = clips ?? [],
                 clipsCap = clipsCap,

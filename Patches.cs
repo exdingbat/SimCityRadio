@@ -37,7 +37,7 @@ namespace SimCityRadio.Patches {
             bool isSCRadio = radio.currentChannel is SimCityRuntimeRadioChannel;
             bool canCoalesce = radio.currentChannel is SimCityRuntimeRadioChannel d && d.allowGameClips;
             if (canCoalesce) {
-                Mod.log.DebugFormat("'{0}':'{1}':'{2}' coalescing game and mod clips", radio.currentChannel.network, radio.currentChannel.name, segment.type.ToString());
+                Mod.log.DebugFormat("{0} {1} merging game and mod clips", radio.currentChannel.name, segment.type.ToString());
             }
 
             List<AudioAsset> modAssets = GetAudioAssetsFromAudioDataBase(radio, segment.type);
@@ -73,7 +73,7 @@ namespace SimCityRadio.Patches {
             bool isEmpty = list.Count == 0;
             if (isEmpty) {
                 segment.clipsCap = 0;
-                Mod.log.DebugFormat("No clips found - '{0}':'{1}':'{2}' skipping segment", c.network, c.name, p.name);
+                Mod.log.DebugFormat("No clips found - skipping {0} {1}", c.name, p.name);
                 p.GoToNextSegment();
             }
             return isEmpty;
@@ -125,7 +125,6 @@ namespace SimCityRadio.Patches {
             bool disallowAds = !m_Networks.TryGetValue(__instance.currentChannel.network, out RadioNetwork value) || !value.allowAds;
 
             if (disallowAds) {
-                Mod.log.DebugFormat("{0} - ads not allowed - going to next segment", __instance.currentChannel.name);
                 __instance.currentChannel.currentProgram.GoToNextSegment();
                 return;
             }
