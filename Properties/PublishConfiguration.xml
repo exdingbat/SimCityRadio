@@ -1,18 +1,13 @@
 ﻿<Publish>
-	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
 	<ModId Value="76446" />
-	<!--Name of the mod to display to players-->
 	<DisplayName Value="SimCity Radio" />
-	<!--Short description of the mod-->
 	<ShortDescription Value="Music from SimCity 3000 and SimCity 4" />
-	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
-	<!--LongDescription Value="The future jazz straight rom the streets of SimCity 3000. Produced and composed by Jerry Martin." /-->
 	<LongDescription>
 *Tune in to future jazz classics from SimCity 3000 and SimCity 4*
 
 # SimCity Radio
 
-SimCity Radio is **one radio network** with **three channels**: **SimCity 3000**, including songs from SimCity 3000 Unlimited; **SimCity 4**, including songs from SimCity 4: Rush Hour; and **SimCity**, which contains both soundtrack. For an added touch of "realism", a few in-game ads from SimCopter and Streets of SimCity and some commercials for various SimCity titles are mixed in with the Cities: Skylines II ads and news. 
+SimCity Radio is **one radio network** with **three channels**: **SimCity 3000**, including songs from SimCity 3000 Unlimited; **SimCity 4**, including songs from SimCity 4: Rush Hour; and **SimCity**, which contains both soundtracks. In addition to the standard Cities: Skylines II ads and news clips, these channels feature a dozen or so additional commercials taken from SimCopter, Streets of SimCity, and actual commercials for various SimCity titles.
 
 ## Notes
 
