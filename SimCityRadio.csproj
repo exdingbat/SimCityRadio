@@ -1,21 +1,16 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
+        <Title>SimCity Radio</Title>
+		<AssemblyTitle>$(Title)</AssemblyTitle>
+        <Product>$(Title)</Product>
         <OutputType>Library</OutputType>
         <TargetFramework>net472</TargetFramework>
         <Configurations>Debug;Release</Configurations>
         <langVersion>latest</langVersion>
         <!-- The folder where Game.dll is located. Set it only if the game is not installed in the default location, otherwise keep it empty -->
-        <!-- <CustomManagedPath>C:\Program Files (x86)\Steam\steamapps\common\Cities Skylines II</CustomManagedPath> -->
-        <CustomManagedPath>C:\Program Files (x86)\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed</CustomManagedPath>
+        <CustomManagedPath>$(CSII_INSTALLATIONPATH)\Cities2_Data\Managed</CustomManagedPath>
         <!-- <CustomManagedPath></CustomManagedPath> -->
-        <!-- Path to the text file where PDX account data is stored which is required to publish the mod -->
-        <!-- Keep it outside of project in order to not commit it or share accidentally -->
-        <!-- The file should contain 2 lines: -->
-        <!-- Your.PDX@Account.login -->
-        <!-- Your-PDX-Account-Pa$$word -->
-        <!-- <PDXAccountDataPath>$(USERPROFILE)\Desktop\pdx_account.txt</PDXAccountDataPath> -->
-        <PDXAccountDataPath>C:\Users\nicho\Desktop\pdx_account.txt</PDXAccountDataPath>
-        <!-- The file where mod information which is required for publishing mod on PDX mods are stored -->
+        <PDXAccountDataPath>$(USERPROFILE)\Desktop\pdx_account.txt</PDXAccountDataPath>
         <PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>
         <AutoGenerateBindingRedirects>True</AutoGenerateBindingRedirects>
     </PropertyGroup>
@@ -31,16 +26,14 @@
     <ItemGroup>
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="YamlDotNet" Version="15.1.2" />
+        <PackageReference Include="Lib.Harmony" Version="2.2.2" />
     </ItemGroup>
     <ItemGroup>
         <Reference Include="$(UserDataPath)\.cache\Mods\mods_subscribed\75862_*\ExtendedRadio.dll" Private="False" />
-        <Reference Include="$(UserDataPath)\.cache\Mods\mods_subscribed\75862_*\0Harmony.dll" Private="False" />
-        <Reference Include="$(UserDataPath)\Mods\ExtendedRadio\ExtendedRadio.dll" Private="False" />
-        <Reference Include="$(UserDataPath)\Mods\ExtendedRadio\0Harmony.dll" Private="False" />
         <Reference Include="$(CustomManagedPath)\Colossal.*.dll" Private="False" />
         <Reference Include="$(CustomManagedPath)\Game*.dll" Private="False" />
         <Reference Include="$(CustomManagedPath)\Unity.*.dll" Private="False" />
-        <Reference Include="$(CustomManagedPath)\cohtml.Net.dll" Private="False" />
+        <Reference Include="cohtml.Net" Private="False" />
         <Reference Include="Game" Private="False" />
         <Reference Include="Colossal.Core" Private="False" />
         <Reference Include="Colossal.Logging" Private="False" />

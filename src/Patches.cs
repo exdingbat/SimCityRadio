@@ -47,10 +47,11 @@ namespace SimCityRadio.Patches {
 
             List<AudioAsset> clips = canCoalesce ? ([.. gameAssets, .. modAssets]) : ([.. isSCRadio ? modAssets : gameAssets]);
             // i don't like the randomness of existing radio methods so i'm adding an additional
-            // layer here. imo, it doesn't matter that this costs more (due to using
+            // shuffle here. imo, it doesn't matter that this costs more (due to using
             // System.Security.Cryptography) because realistically the shortest interval between
             // calls (creating runtime segments) is either the shortest segment (should be fine) or
-            // as fast as a player can spam next on the radio player (who cares)
+            // as fast as a player can spam next on the radio player (who cares, still only a few
+            // times a second)
             clips.Shuffle();
             return clips;
         }
@@ -139,9 +140,6 @@ namespace SimCityRadio.Patches {
     [HarmonyPatch(typeof(Radio), "QueueNextClip")]
     internal class Radio_QueueNextClip {
         private static bool Prefix(Radio __instance) {
-            if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return true; // do not run patched method on normal radio channels
-            }
             RuntimeProgram p = __instance.currentChannel?.currentProgram;
             try {
                 bool test = p?.currentSegment?.currentClip != null;

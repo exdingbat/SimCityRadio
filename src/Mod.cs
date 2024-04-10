@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using Colossal.IO.AssetDatabase.Internal;
 using Colossal.Logging;
-using Colossal.OdinSerializer.Utilities;
 using Colossal.UI;
 
 using ExtendedRadio;

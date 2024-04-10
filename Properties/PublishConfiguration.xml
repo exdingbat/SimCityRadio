@@ -1,0 +1,55 @@
+﻿<Publish>
+	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
+	<ModId Value="76446" />
+	<!--Name of the mod to display to players-->
+	<DisplayName Value="SimCity Radio" />
+	<!--Short description of the mod-->
+	<ShortDescription Value="Music from SimCity 3000 and SimCity 4" />
+	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
+	<!--LongDescription Value="The future jazz straight rom the streets of SimCity 3000. Produced and composed by Jerry Martin." /-->
+	<LongDescription>
+*Tune in to future jazz classics from SimCity 3000 and SimCity 4*
+
+# SimCity Radio
+
+SimCity Radio is **one radio network** with **three channels**: **SimCity 3000**, including songs from SimCity 3000 Unlimited; **SimCity 4**, including songs from SimCity 4: Rush Hour; and **SimCity**, which contains both soundtrack. For an added touch of "realism", a few in-game ads from SimCopter and Streets of SimCity and some commercials for various SimCity titles are mixed in with the Cities: Skylines II ads and news. 
+
+## Notes
+
+Detailed information on the [SimCity 3000](https://www.discogs.com/release/5394990-Various-SimCity-3000), [SimCity 4](https://www.discogs.com/release/7964896-Various-SimCity-4), and [SimCity 4: Rush Hour](https://www.discogs.com/release/3849468-Various-SimCity-4-Rush-Hour-Soundtrack) soundtracks can be found on discogs.
+
+----
+
+[Simtropolis Radio Network](https://mods.paradoxplaza.com/mods/76559/Windows) by Ulisse Wolf is a similar mod that **includes channels for many more SimCity titles** and **does NOT include commercials**.
+
+----
+
+**DISCLAIMER**
+
+This game modification is a non-commercial, fan-made project and is not affiliated with or endorsed by the original musicians or copyright holders. The songs included in this modification are for entertainment purposes only and are not being used for profit. All rights and credits go to the original artists and copyright holders.
+
+Thanks to Jerry Martin (and others) for producing, composing, and performing these memorable soundtracks.
+	</LongDescription>
+	<!--Thumbnail-->
+	<Thumbnail Value="Properties/Thumbnail.jpg" />
+	<!--Screenshot, can be set multiple times-->
+	<Screenshot Value="Properties/Thumbnail.jpg" />
+	<!--Tag, can be set multiple times-->
+	<Tag Value="" />
+	<!--Link to the forum post where the mod can be discussed-->
+	<ForumLink Value="" />
+	<!--Recommended version of the base game to use the mod-->
+	<GameVersion Value="*" />
+	<!--Dependency for the mod, can be set multiple times-->
+	<Dependency Id="75862" />
+	<!--Version of the mod-->
+	<ModVersion Value="1.2" />
+	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
+	<ChangeLog>
+		feat: new channel for SC3k + SC4 soundtracks
+		feat: Sim ads mixed with Skylines 2 ads, news
+	</ChangeLog>
+	<!--External link. supported types are discord, github, youtube, twitch, x, paypal, patreon-->
+	<ExternalLink Type="" Url="" />
+	<ExternalLink Type="github" Url="https://github.com/exdingbat/SimCityRadio" />
+</Publish>
