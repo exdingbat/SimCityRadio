@@ -25,24 +25,6 @@ using static Game.Audio.Radio.Radio;
 namespace SimCityRadio {
     using NetworkTuples = List<(RadioNetwork, List<SimCityRadioChannel>)>;
 
-    public class SimCityRuntimeRadioChannel : RuntimeRadioChannel {
-        public bool allowGameClips;
-    }
-    public class SimCityRadioChannel : RadioChannel {
-        public bool allowGameClips;
-        public new RuntimeRadioChannel CreateRuntime(string path) {
-            SimCityRuntimeRadioChannel runtimeRadioChannel = new() {
-                name = name,
-                description = description,
-                icon = icon,
-                uiPriority = uiPriority,
-                network = network,
-                allowGameClips = allowGameClips,
-            };
-            runtimeRadioChannel.Initialize(this, name + " (" + path + ")");
-            return runtimeRadioChannel;
-        }
-    }
 
     public class Mod : IMod {
         public static ILog log = LogManager.GetLogger($"{nameof(SimCityRadio)}.{nameof(Mod)}").SetShowsErrorsInUI(false);
@@ -57,10 +39,10 @@ namespace SimCityRadio {
         private Harmony _harmony;
         private FileInfo _modFileInfo;
 
-        private List<string> ReadRadioConfigJson() {
+        private List<string> ReadRadioConfig() {
             IEnumerable<string> jsonFromYaml = Directory.GetFiles(_pathToCustomRadiosFolder, "RadioNetwork*.yml").Map(File.ReadAllText).Map(Utils.ToJsonFromYaml);
             IEnumerable<string> json = Directory.GetFiles(_pathToCustomRadiosFolder, "RadioNetwork*.json").Map(File.ReadAllText);
-            return json.Concat(jsonFromYaml).ToList();
+            return [.. jsonFromYaml, .. json];
         }
 
         private NetworkTuples InflateCustomRadioNetworks() => RadioConfigJson.Map(cfg => {
@@ -75,8 +57,6 @@ namespace SimCityRadio {
 
                 _networkTuples.ForEach(
                   ((RadioNetwork network, List<SimCityRadioChannel> channels) t) => {
-                      // m_Networks = ExtendedRadio.radioTravers.Field("m_Networks").GetValue<Dictionary<string, RadioNetwork>>();
-                      // m_RadioChannels = ExtendedRadio.radioTravers.Field("m_RadioChannels").GetValue<Dictionary<string, RuntimeRadioChannel>>()
                       CustomRadios.AddRadioNetworkToTheGame(t.network);
                       Extensions.Log(t.network);
                       log.DebugFormat("Channels ({0})", t.channels.Count);
@@ -103,7 +83,7 @@ namespace SimCityRadio {
 
             // eager load config to find json/yaml errors -- do not load mod if this fails.
             try {
-                RadioConfigJson = ReadRadioConfigJson();
+                RadioConfigJson = ReadRadioConfig();
             } catch (Exception e) when (e is SemanticErrorException or JsonReaderException) {
                 log.Error(e, "$Aborting {nameof(SimCityRadio)} -- methods not patched and mod resources not load. Error parsing RadioNetwork.yml or RadioNetwork.json file.");
                 return;

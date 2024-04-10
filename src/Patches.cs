@@ -9,7 +9,6 @@ using HarmonyLib;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 using Unity.Entities;
 
@@ -18,68 +17,8 @@ using static Colossal.IO.AssetDatabase.AudioAsset;
 using static Game.Audio.Radio.Radio;
 
 #pragma warning disable IDE0051
-#pragma warning disable IDE0060
 
 namespace SimCityRadio.Patches {
-    using AudioDB = Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<SegmentType, List<AudioAsset>>>>>;
-
-    public static class PatchUtils {
-
-        public static Traverse<AudioDB> audioDBTraverse = Traverse.Create<ExtendedRadio.ExtendedRadio>().Field<AudioDB>("audioDataBase");
-
-        public static List<AudioAsset> GetAudioAssetsFromAudioDataBase(Radio radio, SegmentType segmentType) {
-            AudioDB audioDB = audioDBTraverse.Value;
-
-            return audioDB.Get(radio.currentChannel.network)?.Get(radio.currentChannel.name)?.Get(radio.currentChannel.currentProgram.name)?.Get(segmentType) ?? [];
-        }
-
-        public static List<AudioAsset> GetAllClips(Radio radio, RuntimeSegment segment) {
-            bool isSCRadio = radio.currentChannel is SimCityRuntimeRadioChannel;
-            bool canCoalesce = radio.currentChannel is SimCityRuntimeRadioChannel d && d.allowGameClips;
-            if (canCoalesce) {
-                Mod.log.DebugFormat("{0} {1} merging game and mod clips", radio.currentChannel.name, segment.type.ToString());
-            }
-
-            List<AudioAsset> modAssets = GetAudioAssetsFromAudioDataBase(radio, segment.type);
-            IEnumerable<AudioAsset> gameAssets = AssetDatabase.global
-                .GetAssets(SearchFilter<AudioAsset>
-                .ByCondition((AudioAsset asset) => segment.tags.All(asset.ContainsTag)));
-
-            List<AudioAsset> clips = canCoalesce ? ([.. gameAssets, .. modAssets]) : ([.. isSCRadio ? modAssets : gameAssets]);
-            // i don't like the randomness of existing radio methods so i'm adding an additional
-            // shuffle here. imo, it doesn't matter that this costs more (due to using
-            // System.Security.Cryptography) because realistically the shortest interval between
-            // calls (creating runtime segments) is either the shortest segment (should be fine) or
-            // as fast as a player can spam next on the radio player (who cares, still only a few
-            // times a second)
-            clips.Shuffle();
-            return clips;
-        }
-
-        public static AudioAsset[] GetRandomSelection(List<AudioAsset> list, RuntimeSegment segment) {
-            Random rnd = new();
-            List<int> list2 = (from x in Enumerable.Range(0, list.Count)
-                               orderby rnd.Next()
-                               select x).Take(segment.clipsCap).ToList();
-            AudioAsset[] randomSelection = new AudioAsset[segment.clipsCap];
-            for (int i = 0; i < randomSelection.Length; i++) {
-                randomSelection[i] = list[list2[i]];
-            }
-            return randomSelection;
-        }
-
-        public static bool HandleEmptySegment(Radio radio, RuntimeSegment segment, List<AudioAsset> list) {
-            RuntimeRadioChannel c = radio.currentChannel;
-            RuntimeProgram p = c.currentProgram;
-            bool isEmpty = list.Count == 0;
-            if (isEmpty) {
-                segment.clipsCap = 0;
-                Mod.log.DebugFormat("No clips found - skipping {0} {1}", c.name, p.name);
-                p.GoToNextSegment();
-            }
-            return isEmpty;
-        }
-    }
 
     [HarmonyPatch(typeof(RadioChannel), "CreateRuntime")]
     internal class RadioChannel_CreateRuntime {
@@ -137,6 +76,7 @@ namespace SimCityRadio.Patches {
             segment.clips = PatchUtils.GetRandomSelection(list, segment);
         }
     }
+
     [HarmonyPatch(typeof(Radio), "QueueNextClip")]
     internal class Radio_QueueNextClip {
         private static bool Prefix(Radio __instance) {

@@ -4,12 +4,7 @@
 .vscode
 
 *.ogg
-*.rsuser
-*.sln.docstates
-*.suo
 *.user
-*.userosscache
-*.userprefs
 
 bin
 node_modules
