@@ -89,7 +89,7 @@ channels:
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 4, clips: *sc3k-clips }
+                - { type: Playlist, clipsCap: 6, clips: *sc3k-clips }
     - name: SimCity 4
       description: SimCity 4
       allowGameClips: true
@@ -102,7 +102,7 @@ channels:
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 4, clips: *sc4-clips }
+                - { type: Playlist, clipsCap: 6, clips: *sc4-clips }
     - name: SimCity
       description: All SimCity, all the time
       allowGameClips: true
@@ -115,4 +115,4 @@ channels:
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 2, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 4, clips: [*sc4-clips, *sc3k-clips] }
+                - { type: Playlist, clipsCap: 6, clips: [*sc4-clips, *sc3k-clips] }

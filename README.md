@@ -1,9 +1,4 @@
-﻿<Publish>
-    <ModId Value="76446" />
-    <DisplayName Value="SimCity Radio" />
-    <ShortDescription Value="Music from SimCity 3000 and SimCity 4" />
-    <LongDescription>
-*Tune in to future jazz classics from SimCity 3000 and SimCity 4*
+_Tune in to future jazz classics from SimCity 3000 and SimCity 4_
 
 # SimCity Radio
 
@@ -15,31 +10,14 @@ Radio channel config can be edited at `76446_*\CustomRadios\RadioNetwork.yml` in
 
 Detailed information on the [SimCity 3000](https://www.discogs.com/release/5394990-Various-SimCity-3000), [SimCity 4](https://www.discogs.com/release/7964896-Various-SimCity-4), and [SimCity 4: Rush Hour](https://www.discogs.com/release/3849468-Various-SimCity-4-Rush-Hour-Soundtrack) soundtracks can be found on discogs.
 
-----
+---
 
 [Simtropolis Radio Network](https://mods.paradoxplaza.com/mods/76559/Windows) by Ulisse Wolf is a similar mod that **includes channels for many more SimCity titles** and **does NOT include commercials**.
 
-----
+---
 
 **DISCLAIMER**
 
 This game modification is a non-commercial, fan-made project and is not affiliated with or endorsed by the original musicians or copyright holders. The songs included in this modification are for entertainment purposes only and are not being used for profit. All rights and credits go to the original artists and copyright holders.
 
 Thanks to Jerry Martin (and others) for producing, composing, and performing these memorable soundtracks.
-    </LongDescription>
-    <Thumbnail Value="Properties/Thumbnail.jpg" />
-    <Screenshot Value="Properties/Thumbnail.jpg" />
-    <Tag Value="" />
-    <ForumLink Value="" />
-    <GameVersion Value="*" />
-    <Dependency Id="75862" />
-    <ModVersion Value="1.3" />
-    <ChangeLog>
-        fix: Window Washers Dream typo
-        fix: music clipsCap 4 -&gt; 6
-    </ChangeLog>
-    <ExternalLink Type=""
-                  Url="" />
-    <ExternalLink Type="github"
-                  Url="https://github.com/exdingbat/SimCityRadio" />
-</Publish>
