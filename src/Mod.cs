@@ -22,10 +22,9 @@ using YamlDotNet.Core;
 using static ExtendedRadio.ExtendedRadio;
 using static Game.Audio.Radio.Radio;
 
+using NetworkTuples = System.Collections.Generic.List<(Game.Audio.Radio.Radio.RadioNetwork, System.Collections.Generic.List<SimCityRadio.SimCityRadioChannel>)>;
+
 namespace SimCityRadio {
-    using NetworkTuples = List<(RadioNetwork, List<SimCityRadioChannel>)>;
-
-
     public class Mod : IMod {
         public static ILog log = LogManager.GetLogger($"{nameof(SimCityRadio)}.{nameof(Mod)}").SetShowsErrorsInUI(false);
         public static Dictionary<string, bool> coalesceByNetwork = [];

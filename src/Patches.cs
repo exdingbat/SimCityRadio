@@ -2,17 +2,10 @@
 using Colossal.IO.AssetDatabase;
 
 using Game.Audio.Radio;
-using Game.Prefabs;
-using Game.Triggers;
 
 using HarmonyLib;
 
-using System;
 using System.Collections.Generic;
-
-using Unity.Entities;
-
-using static Colossal.IO.AssetDatabase.AudioAsset;
 
 using static Game.Audio.Radio.Radio;
 
@@ -39,20 +32,6 @@ namespace SimCityRadio.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(Radio), "GetPlaylistClips")]
-    internal class Radio_GetPlaylistClips {
-        private static void Postfix(Radio __instance, RuntimeSegment segment) {
-            if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return; // do not run patched method on normal radio channels
-            }
-            List<AudioAsset> list = PatchUtils.GetAllClips(__instance, segment);
-            bool isEmpty = PatchUtils.HandleEmptySegment(__instance, segment, list);
-            if (isEmpty) {
-                return;
-            }
-            segment.clips = PatchUtils.GetRandomSelection(list, segment);
-        }
-    }
 
     [HarmonyPatch(typeof(Radio), "GetCommercialClips")]
     internal class Radio_GetCommercialClips {
@@ -77,59 +56,20 @@ namespace SimCityRadio.Patches {
         }
     }
 
-    [HarmonyPatch(typeof(Radio), "QueueNextClip")]
-    internal class Radio_QueueNextClip {
-        private static bool Prefix(Radio __instance) {
-            RuntimeProgram p = __instance.currentChannel?.currentProgram;
-            try {
-                bool test = p?.currentSegment?.currentClip != null;
-            } catch (NullReferenceException) {
-                Mod.log.DebugFormat("Skipping QueueNextClip in {1} segment of {0}", p?.name, p?.currentSegment.type);
-                p.GoToNextSegment();
-                // segment probably doesn't have any clips and accessing the current clip has failed. skip QueueNextClip.
-                return false;
-            }
-            // everything is working normally. continue with QueueNextClip.
-            return true;
-        }
-    }
-
-    [HarmonyPatch(typeof(Radio), "GetEventClips")]
-    internal class Radio_GetEventClips {
-        private static void Postfix(Radio __instance, ref List<AudioAsset> __result, RuntimeSegment segment, Metatag metatag, bool newestFirst = false, bool flush = false) {
-            if (__instance.currentChannel is not SimCityRuntimeRadioChannel) {
-                return; // do not run patched method on normal radio channels
-            }
-            // check channel setting to allow merging with game clips
-            RadioTagSystem existingSystemManaged = World.DefaultGameObjectInjectionWorld.GetExistingSystemManaged<RadioTagSystem>();
-            PrefabSystem orCreateSystemManaged = World.DefaultGameObjectInjectionWorld.GetOrCreateSystemManaged<PrefabSystem>();
-            List<AudioAsset> clipQueue = new(segment.clipsCap);
-            List<AudioAsset> pool = [];
-            while (clipQueue.Count < segment.clipsCap && existingSystemManaged.TryPopEvent(segment.type, newestFirst, out RadioTag radioTag)) {
-                pool.Clear();
-
-                List<AudioAsset> list = PatchUtils.GetAllClips(__instance, segment);
-                bool isEmpty = PatchUtils.HandleEmptySegment(__instance, segment, list);
-                if (isEmpty) {
-                    return;
-                }
-
-                foreach (AudioAsset asset in list) {
-                    if (asset.GetMetaTag(metatag) == orCreateSystemManaged.GetPrefab<PrefabBase>(radioTag.m_Event).name) {
-                        pool.Add(asset);
-                    }
-                }
-
-                if (pool.Count > 0) {
-                    clipQueue.Add(pool[new Unity.Mathematics.Random((uint)DateTime.Now.Ticks).NextInt(0, pool.Count)]);
-                }
-            }
-
-            if (flush) {
-                existingSystemManaged.FlushEvents(segment.type);
-            }
-            __result = clipQueue;
-        }
-    }
-
+    // [HarmonyPatch(typeof(Radio), "QueueNextClip")]
+    // internal class Radio_QueueNextClip {
+    //     private static bool Prefix(Radio __instance) {
+    //         RuntimeProgram p = __instance.currentChannel?.currentProgram;
+    //         try {
+    //             bool test = p?.currentSegment?.currentClip != null;
+    //         } catch (NullReferenceException) {
+    //             Mod.log.DebugFormat("Skipping QueueNextClip in {1} segment of {0}", p?.name, p?.currentSegment.type);
+    //             p.GoToNextSegment();
+    //             // segment probably doesn't have any clips and accessing the current clip has failed. skip QueueNextClip.
+    //             return false;
+    //         }
+    //         // everything is working normally. continue with QueueNextClip.
+    //         return true;
+    //     }
+    // }
 }

@@ -6,7 +6,10 @@ SimCity Radio is **one radio network** with **three channels**: **SimCity 3000**
 
 ## Notes
 
-Radio channel config can be edited at `76446_*\CustomRadios\RadioNetwork.yml` in `%userprofile%\appdata\locallow\Colossal Order\Cities Skylines II\.cache\Mods\mods_subscribed`.
+Radio channel config can be edited at `76446_*\CustomRadios\RadioNetwork.yml` in `%userprofile%\appdata\locallow\Colossal Order\Cities Skylines II\.cache\Mods\mods_subscribed`. This radio mod is a bit different than the standard ExtendedRadio mod. It has:
+
+-   config written in YAML, which allows anchors and references ( `&` and `*`) than can reduce repetition
+-   flat file structure--config files and audio clips are _not_ nested in subdirectories
 
 Detailed information on the [SimCity 3000](https://www.discogs.com/release/5394990-Various-SimCity-3000), [SimCity 4](https://www.discogs.com/release/7964896-Various-SimCity-4), and [SimCity 4: Rush Hour](https://www.discogs.com/release/3849468-Various-SimCity-4-Rush-Hour-Soundtrack) soundtracks can be found on discogs.
 

@@ -4,8 +4,6 @@ using Colossal.Json;
 
 using Game.Audio.Radio;
 
-using HarmonyLib;
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -17,12 +15,11 @@ using YamlDotNet.Serialization;
 
 using static Game.Audio.Radio.Radio;
 
+using AudioDB = System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<string, System.Collections.Generic.Dictionary<Game.Audio.Radio.Radio.SegmentType, System.Collections.Generic.List<Colossal.IO.AssetDatabase.AudioAsset>>>>>;
+
 #nullable enable
 
 namespace SimCityRadio {
-
-    using AudioDB = Dictionary<string, Dictionary<string, Dictionary<string, Dictionary<SegmentType, List<AudioAsset>>>>>;
-
     internal static class Utils {
         public static string ToJsonFromYaml(string yaml) {
             object? parsedYml = new Deserializer().Deserialize(new MergingParser(new Parser(new StringReader(yaml))));
@@ -33,13 +30,9 @@ namespace SimCityRadio {
 
     public static class PatchUtils {
 
-        public static Traverse<AudioDB> audioDBTraverse = Traverse.Create<ExtendedRadio.ExtendedRadio>().Field<AudioDB>("audioDataBase");
+        public static AudioDB audioDB = [];
 
-        public static List<AudioAsset> GetAudioAssetsFromAudioDataBase(Radio radio, SegmentType segmentType) {
-            AudioDB audioDB = audioDBTraverse.Value;
-
-            return audioDB.Get(radio.currentChannel.network)?.Get(radio.currentChannel.name)?.Get(radio.currentChannel.currentProgram.name)?.Get(segmentType) ?? [];
-        }
+        public static List<AudioAsset> GetAudioAssetsFromAudioDataBase(Radio radio, SegmentType segmentType) => audioDB.Get(radio.currentChannel.network)?.Get(radio.currentChannel.name)?.Get(radio.currentChannel.currentProgram.name)?.Get(segmentType) ?? [];
 
         public static List<AudioAsset> GetAllClips(Radio radio, RuntimeSegment segment) {
             bool isSCRadio = radio.currentChannel is SimCityRuntimeRadioChannel;
@@ -89,18 +82,7 @@ namespace SimCityRadio {
         }
     }
 
-
-
     internal static class Extensions {
-        // nullable JToken accessor
-        // public static T? Get<T>(this JToken token, string key, T defaultValue) =>
-        //      (token[key] == null || token[key]?.Type == JTokenType.Null)
-        //      ? defaultValue
-        //      : token.Value<T>(key);
-
-        // public static string? Get(this JToken token, string key) =>
-        //     (string?)token?[key];
-
         // nullable chainable dictionary accessor
         public static V? Get<T, V>(this IDictionary<T, V> dict, T key) {
             dict.TryGetValue(key, out V value);

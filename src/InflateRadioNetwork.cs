@@ -12,12 +12,11 @@ using System.Linq;
 
 using static Game.Audio.Radio.Radio;
 
+using ClipTuple = (string path, ExtendedRadio.JsonAudioAsset data);
+
 #nullable enable
 
 namespace SimCityRadio {
-    using ClipTuple = (string path, JsonAudioAsset data);
-
-
     // do all this instead of Decode.Make crap because dynamic types don't seem to work with unity
     // and i decided to support polymorphic config files
     public class InflateRadioNetwork {
@@ -56,7 +55,7 @@ namespace SimCityRadio {
             program.endTime ??= "00:00";
             program.startTime ??= "00:00";
             program.loopProgram = jtoken.Value<bool?>("loopProgram") ?? true;
-            program.segments = segments?.MapToArray((s) => ParseSegment(s, channel));
+            program.segments = segments?.MapToArray((s) => ParseSegment(s, channel, program.name));
             return program;
         }
 
@@ -97,7 +96,7 @@ namespace SimCityRadio {
             return normalizedClips;
         }
 
-        private Segment ParseSegment(JToken jtoken, string channel) {
+        private Segment ParseSegment(JToken jtoken, string channel, string program) {
             int clipsCap = jtoken.Value<int>("clipsCap");
             clipsCap = clipsCap == 0 ? 1 : clipsCap;
             string typeString = jtoken.Value<string?>("type") ?? "Playlist";
@@ -106,9 +105,9 @@ namespace SimCityRadio {
             if (tags.Length == 0) {
                 tags = MakeTags(type, channel);
             }
-            AudioAsset clipToAudio(ClipTuple c) =>
-                MyMusicLoader.LoadAudioFile(Path.Combine([_basePath, .. c.path.Split('/')]), type, network.name, channel, c.data);
-            AudioAsset[] clips = ParseClips(jtoken["clips"]).MapToArray(clipToAudio);
+            AudioAsset? clipToAudio(ClipTuple c) =>
+                MyMusicLoader.LoadAudioFile(Path.Combine([_basePath, .. c.path.Split('/')]), type, network.name, channel, program, c.data);
+            AudioAsset?[] clips = ParseClips(jtoken["clips"]).MapToArray(clipToAudio);
 
             return new Segment {
                 clips = clips ?? [],
