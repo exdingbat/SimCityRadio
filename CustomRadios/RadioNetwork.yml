@@ -77,42 +77,42 @@ clipGroups:
       - clips/Without Form [Region].ogg
       - clips/Zone System.ogg
 channels:
-    - name: SimCity 3000
-      description: SimCity 3000
+    - name: SimCity 3000 + Unlimited
+      description: Non-stop future jazz
       allowGameClips: true
       icon: &sc3k-icon coui://simcityradio/CustomRadios/sc3k-channel.svg
       programs:
-          - name: + Unlimited
+          - name: SimCity 3000 Nonstop
             description: Non-stop future jazz
             icon: *sc3k-icon
             segments:
+                - { type: Playlist, clipsCap: 5, clips: *sc3k-clips }
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 1, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 5, clips: *sc3k-clips }
-    - name: SimCity 4
-      description: SimCity 4
+    - name: SimCity 4 + Rush Hour
+      description: Nonstop future jazz
       allowGameClips: true
       icon: &sc4-icon coui://simcityradio/CustomRadios/sc4-channel.svg
       programs:
-          - name: + Rush Hour
-            description: Non-stop future jazz
+          - name: SimCity 4 Nonstop
+            description: Nonstop future jazz
             icon: *sc4-icon
             segments:
+                - { type: Playlist, clipsCap: 5, clips: *sc4-clips }
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 1, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 5, clips: *sc4-clips }
-    - name: SimCity
+    - name: SimCity 3000 + SimCity 4
       description: All SimCity, all the time
       allowGameClips: true
       icon: &sc-icon coui://simcityradio/CustomRadios/simcity-channel.svg
       programs:
-          - name: SimCity 3000 + SimCity 4
+          - name: SimCity Mix
             description: All SimCity, all the time
             icon: *sc-icon
             segments:
+                - { type: Playlist, clipsCap: 5, clips: [*sc4-clips, *sc3k-clips] }
                 - type: News
                 - type: Weather
                 - { type: Commercial, clipsCap: 1, clips: *ads-clips }
-                - { type: Playlist, clipsCap: 5, clips: [*sc4-clips, *sc3k-clips] }

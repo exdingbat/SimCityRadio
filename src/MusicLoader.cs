@@ -45,11 +45,11 @@ namespace SimCityRadio {
             using (Stream writeStream = audioAsset.GetReadStream()) {
                 Dictionary<Metatag, string> m_Metatags = [];
                 Traverse audioAssetTravers = Traverse.Create(audioAsset);
-                Track track = new(audioFilePath, true);
-                AddMetaTag(audioAsset, m_Metatags, Metatag.Title, jsAudioAsset.Title ?? track.Title);
-                AddMetaTag(audioAsset, m_Metatags, Metatag.Album, jsAudioAsset.Album ?? track.Album);
-                AddMetaTag(audioAsset, m_Metatags, Metatag.Artist, jsAudioAsset.Artist ?? track.Artist);
-                AddMetaTag(audioAsset, m_Metatags, Metatag.Type, track, "TYPE", jsAudioAsset.Type ?? (segmentType.ToString() == "Playlist" ? "Music" : segmentType.ToString()));
+                Track track = new(writeStream, audioAsset.database.GetMeta(audioAsset.guid).mimeType, null);
+                AddMetaTag(audioAsset, m_Metatags, Metatag.Title, track.Title);
+                AddMetaTag(audioAsset, m_Metatags, Metatag.Album, track.Album);
+                AddMetaTag(audioAsset, m_Metatags, Metatag.Artist, track.Artist);
+                AddMetaTag(audioAsset, m_Metatags, Metatag.Type, track, "TYPE", segmentType.ToString() == "Playlist" ? "Music" : segmentType.ToString());
                 AddMetaTag(audioAsset, m_Metatags, Metatag.Brand, track, "BRAND", jsAudioAsset.Brand);
                 AddMetaTag(audioAsset, m_Metatags, Metatag.RadioStation, track, "RADIO STATION", networkName);
                 AddMetaTag(audioAsset, m_Metatags, Metatag.RadioChannel, track, "RADIO CHANNEL", radioChannelName);
